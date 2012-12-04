@@ -156,6 +156,8 @@ end
 
 ruby_block "block_until_operational" do
   block do
+    node.jenkins.server.port = node[:jenkins][:server][:port]
+    node.jenkins.server.url = "http://#{node[:jenkins][:server][:host]}:#{node.jenkins.server.port}"
     until IO.popen("netstat -lnt").entries.select { |entry|
         entry.split[3] =~ /:#{node[:jenkins][:server][:port]}$/
       }.size == 1
