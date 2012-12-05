@@ -52,6 +52,26 @@ ruby_block "store jenkins ssh pubkey" do
   end
 end
 
+directory "#{node[:jenkins][:server][:home]}/jenkins" do
+  owner node[:jenkins][:server][:user]
+  group node[:jenkins][:server][:group]
+  not_if { File.exists?("#{node[:jenkins][:server][:home]}/jenkins") }
+end
+
+directory "#{node[:jenkins][:server][:home]}/jenkins/logs" do
+  owner node[:jenkins][:server][:user]
+  group node[:jenkins][:server][:group]
+  not_if { File.exists?("#{node[:jenkins][:server][:home]}/jenkins/logs") }
+end
+
+link "/var/lib/jenkins" do
+  to "#{node[:jenkins][:server][:home]}/jenkins"
+end
+
+link "/var/log/jenkins" do
+  to "#{node[:jenkins][:server][:home]}/jenkins/logs"
+end
+
 directory "#{node[:jenkins][:server][:home]}/plugins" do
   owner node[:jenkins][:server][:user]
   group node[:jenkins][:server][:group]
@@ -90,7 +110,7 @@ when "ubuntu", "debian"
     package "daemon"
     # These are both dependencies of the jenkins deb package
     package "jamvm"
-    package "openjdk-6-jre"
+    package "openjdk-7-jre"
 
     package "psmisc"
     key_url = "http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key"
@@ -248,6 +268,12 @@ log "plugins updated, restarting jenkins" do
       }.size > 0
     end
   end
+end
+
+
+template "/etc/default/jenkins" do
+  source "jenkins_default.erb"
+  mode 0644
 end
 
 # Front Jenkins with an HTTP server
