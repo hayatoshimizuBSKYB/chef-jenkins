@@ -25,7 +25,7 @@ pkey = "/home/jenkins/.ssh/id_rsa"
 tmp = "/tmp"
 
 user node[:jenkins][:server][:user] do
-  home /home/jenkins
+  home "/home/jenkins"
 end
 
 directory node[:jenkins][:server][:home] do
