@@ -21,11 +21,11 @@
 # limitations under the License.
 #
 
-pkey = "#{node[:jenkins][:server][:home]}/.ssh/id_rsa"
+pkey = "/home/jenkins/.ssh/id_rsa"
 tmp = "/tmp"
 
 user node[:jenkins][:server][:user] do
-  home node[:jenkins][:server][:home]
+  home /home/jenkins
 end
 
 directory node[:jenkins][:server][:home] do
@@ -34,7 +34,7 @@ directory node[:jenkins][:server][:home] do
   group node[:jenkins][:server][:group]
 end
 
-directory "#{node[:jenkins][:server][:home]}/.ssh" do
+directory "/home/jenkins/.ssh" do
   mode 0700
   owner node[:jenkins][:server][:user]
   group node[:jenkins][:server][:group]
